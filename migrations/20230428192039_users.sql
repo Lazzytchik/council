@@ -4,7 +4,7 @@ CREATE TABLE users(
       id            serial              constraint users_pk PRIMARY KEY,
       email         varchar(100)        unique,
       username      varchar(50),
-      password      varchar(50)
+      password      varchar(60)
 );
 -- +goose StatementEnd
 

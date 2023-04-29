@@ -16,14 +16,17 @@ type AuthServer interface {
 
 type Server struct {
 	*http.Server
+	Source data.Postgres
 }
 
-func NewServer(addr string, errLogger *log.Logger) *Server {
+func NewServer(addr string, errLogger *log.Logger, options data.ConnOptions) *Server {
 	s := Server{}
 
+	s.Source = data.NewPostgres(options, errLogger)
+
 	router := http.NewServeMux()
-	router.HandleFunc("/auth", s.Auth(data.Mock{}))
-	router.HandleFunc("/register", s.Register(data.Mock{}))
+	router.HandleFunc("/auth", s.Auth(s.Source))
+	router.HandleFunc("/register", s.Register(s.Source))
 
 	s.Server = &http.Server{
 		Addr:     addr,
@@ -36,8 +39,8 @@ func NewServer(addr string, errLogger *log.Logger) *Server {
 
 func (s *Server) Auth(i data.Identifier) http.HandlerFunc {
 	type request struct {
-		email    string `json:"email"`
-		password string `json:"password"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
 	type response struct {
@@ -49,11 +52,13 @@ func (s *Server) Auth(i data.Identifier) http.HandlerFunc {
 		req := &request{}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			s.error(w, r, 400, errors.New("invalid parameters"))
+			return
 		}
 
-		id, err := i.Identify(req.email, req.password)
+		id, err := i.Identify(req.Email, req.Password)
 		if err != nil {
 			s.error(w, r, 403, errors.New("no user with given credentials"))
+			return
 		}
 
 		s.respond(w, r, 200, response{
@@ -73,11 +78,15 @@ func (s *Server) Register(rg data.Registrar) http.HandlerFunc {
 		user := &model.User{}
 		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 			s.error(w, r, 400, errors.New("invalid parameters"))
+			return
 		}
+
+		user.Hashed()
 
 		id, err := rg.Register(*user)
 		if err != nil {
 			s.error(w, r, 403, err)
+			return
 		}
 
 		s.respond(w, r, 200, response{
