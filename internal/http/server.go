@@ -10,13 +10,14 @@ import (
 )
 
 type AuthServer interface {
-	Auth(i data.Identifier) http.HandlerFunc
-	Register(rg data.Registrar) http.HandlerFunc
+	Auth() http.HandlerFunc
+	Register() http.HandlerFunc
 }
 
 type Server struct {
 	*http.Server
-	Source data.Postgres
+	Source  data.Postgres
+	Session Session
 }
 
 func NewServer(addr string, errLogger *log.Logger, options data.ConnOptions) *Server {
@@ -25,8 +26,8 @@ func NewServer(addr string, errLogger *log.Logger, options data.ConnOptions) *Se
 	s.Source = data.NewPostgres(options, errLogger)
 
 	router := http.NewServeMux()
-	router.HandleFunc("/auth", s.Auth(s.Source))
-	router.HandleFunc("/register", s.Register(s.Source))
+	router.HandleFunc("/auth", s.Auth())
+	router.HandleFunc("/register", s.Register())
 
 	s.Server = &http.Server{
 		Addr:     addr,
@@ -37,7 +38,7 @@ func NewServer(addr string, errLogger *log.Logger, options data.ConnOptions) *Se
 	return &s
 }
 
-func (s *Server) Auth(i data.Identifier) http.HandlerFunc {
+func (s *Server) Auth() http.HandlerFunc {
 	type request struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -55,7 +56,7 @@ func (s *Server) Auth(i data.Identifier) http.HandlerFunc {
 			return
 		}
 
-		id, err := i.Identify(req.Email, req.Password)
+		id, err := s.Source.Identify(req.Email, req.Password)
 		if err != nil {
 			s.error(w, r, 403, errors.New("no user with given credentials"))
 			return
@@ -68,7 +69,7 @@ func (s *Server) Auth(i data.Identifier) http.HandlerFunc {
 	}
 }
 
-func (s *Server) Register(rg data.Registrar) http.HandlerFunc {
+func (s *Server) Register() http.HandlerFunc {
 	type response struct {
 		Status string `json:"status"`
 		Id     uint   `json:"result"`
@@ -83,7 +84,7 @@ func (s *Server) Register(rg data.Registrar) http.HandlerFunc {
 
 		user.Hashed()
 
-		id, err := rg.Register(*user)
+		id, err := s.Source.Register(*user)
 		if err != nil {
 			s.error(w, r, 403, err)
 			return
