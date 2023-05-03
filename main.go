@@ -3,8 +3,8 @@ package main
 import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
+	"lazzytchk/council/internal/app"
 	"lazzytchk/council/internal/data"
-	"lazzytchk/council/internal/http"
 	"log"
 	"os"
 )
@@ -25,6 +25,6 @@ func main() {
 
 	el := log.New(os.Stdout, "[SERVER]: ", log.Lmicroseconds)
 
-	s := http.NewServer(":8080", el, options)
+	s := app.NewServer(":8080", el, options)
 	s.ListenAndServe()
 }

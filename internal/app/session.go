@@ -1,4 +1,4 @@
-package http
+package app
 
 import (
 	"lazzytchk/council/internal/model"
