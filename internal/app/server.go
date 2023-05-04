@@ -5,7 +5,6 @@ import (
 	"errors"
 	"lazzytchk/council/internal/data"
 	"lazzytchk/council/internal/model"
-	"log"
 	"net/http"
 )
 
@@ -16,27 +15,28 @@ type AuthServer interface {
 
 type Server struct {
 	*http.Server
-	Source  data.Postgres
-	Session Session
+	identifier data.Identifier
+	registrar  data.Registrar
+	session    Session
 }
 
-func NewServer(addr string, errLogger *log.Logger, options data.ConnOptions) *Server {
-	s := Server{}
-
-	s.Source = data.NewPostgres(options, errLogger)
-
-	router := http.NewServeMux()
-	router.HandleFunc("/auth", s.Auth())
-	router.HandleFunc("/register", s.Register())
-
-	s.Server = &http.Server{
-		Addr:     addr,
-		Handler:  router,
-		ErrorLog: errLogger,
-	}
-
-	return &s
-}
+//func NewServer(addr string, errLogger *log.Logger, options data.ConnOptions) *Server {
+//	s := Server{}
+//
+//	s.source = data.NewPostgres(options, errLogger)
+//
+//	router := http.NewServeMux()
+//	router.HandleFunc("/auth", s.Auth())
+//	router.HandleFunc("/register", s.Register())
+//
+//	s.Server = &http.Server{
+//		Addr:     addr,
+//		Handler:  router,
+//		ErrorLog: errLogger,
+//	}
+//
+//	return &s
+//}
 
 func (s *Server) Auth() http.HandlerFunc {
 	type request struct {
@@ -56,7 +56,7 @@ func (s *Server) Auth() http.HandlerFunc {
 			return
 		}
 
-		id, err := s.Source.Identify(req.Email, req.Password)
+		id, err := s.identifier.Identify(req.Email, req.Password)
 		if err != nil {
 			s.error(w, r, 403, errors.New("no user with given credentials"))
 			return
@@ -84,7 +84,7 @@ func (s *Server) Register() http.HandlerFunc {
 
 		user.Hashed()
 
-		id, err := s.Source.Register(*user)
+		id, err := s.registrar.Register(*user)
 		if err != nil {
 			s.error(w, r, 403, err)
 			return

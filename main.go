@@ -6,6 +6,7 @@ import (
 	"lazzytchk/council/internal/app"
 	"lazzytchk/council/internal/data"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -25,6 +26,19 @@ func main() {
 
 	el := log.New(os.Stdout, "[SERVER]: ", log.Lmicroseconds)
 
-	s := app.NewServer(":8080", el, options)
+	builder := app.ServerBuilder{
+		Server: &app.Server{},
+	}
+
+	postgres := data.NewPostgres(options, el)
+
+	builder.ConfigureIdentifier(postgres)
+	builder.ConfigureRegistrar(postgres)
+	builder.ConfigureServer(&http.Server{
+		Addr:     ":8080",
+		ErrorLog: el,
+	})
+
+	s := builder.Build()
 	s.ListenAndServe()
 }
