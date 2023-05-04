@@ -5,6 +5,7 @@ import (
 	"errors"
 	"lazzytchk/council/internal/data"
 	"lazzytchk/council/internal/model"
+	"lazzytchk/council/internal/session"
 	"net/http"
 )
 
@@ -17,26 +18,8 @@ type Server struct {
 	*http.Server
 	identifier data.Identifier
 	registrar  data.Registrar
-	session    Session
+	session    session.Session
 }
-
-//func NewServer(addr string, errLogger *log.Logger, options data.ConnOptions) *Server {
-//	s := Server{}
-//
-//	s.source = data.NewPostgres(options, errLogger)
-//
-//	router := http.NewServeMux()
-//	router.HandleFunc("/auth", s.Auth())
-//	router.HandleFunc("/register", s.Register())
-//
-//	s.Server = &http.Server{
-//		Addr:     addr,
-//		Handler:  router,
-//		ErrorLog: errLogger,
-//	}
-//
-//	return &s
-//}
 
 func (s *Server) Auth() http.HandlerFunc {
 	type request struct {

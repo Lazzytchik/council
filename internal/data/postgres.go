@@ -8,8 +8,8 @@ import (
 	"log"
 )
 
-func NewPostgres(options ConnOptions, l *log.Logger) Postgres {
-	return Postgres{options, l}
+func NewPostgres(options ConnOptions, l *log.Logger) *Postgres {
+	return &Postgres{options, l}
 }
 
 type Postgres struct {
