@@ -2,6 +2,7 @@ package app
 
 import (
 	"lazzytchk/council/internal/data"
+	"lazzytchk/council/internal/session"
 	"net/http"
 )
 
@@ -30,6 +31,10 @@ func (b *ServerBuilder) ConfigureIdentifier(identifier data.Identifier) {
 
 func (b *ServerBuilder) ConfigureRegistrar(registrar data.Registrar) {
 	b.Server.registrar = registrar
+}
+
+func (b *ServerBuilder) ConfigureSession(s session.Session) {
+	b.Server.session = s
 }
 
 func (b *ServerBuilder) Build() *Server {

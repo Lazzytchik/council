@@ -1,13 +1,16 @@
 package main
 
 import (
+	"github.com/go-redis/redis"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
 	"lazzytchk/council/internal/app"
 	"lazzytchk/council/internal/data"
+	"lazzytchk/council/internal/session"
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -31,9 +34,17 @@ func main() {
 	}
 
 	postgres := data.NewPostgres(options, el)
+	ses := session.NewRedis(&redis.Options{
+		Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT_NUMBER"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       0,
+	},
+		time.Hour*4,
+	)
 
 	builder.ConfigureIdentifier(postgres)
 	builder.ConfigureRegistrar(postgres)
+	builder.ConfigureSession(ses)
 	builder.ConfigureServer(&http.Server{
 		Addr:     ":8080",
 		ErrorLog: el,

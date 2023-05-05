@@ -18,7 +18,7 @@ services:
       - REDIS_DISABLE_COMMANDS=${REDIS_DISABLE_COMMANDS}
       - ALLOW_EMPTY_PASSWORD=${REDIS_ALLOW_EMPTY_PASSWORD}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_PORT_NUMBER=6379
+      - REDIS_PORT_NUMBER=${REDIS_PORT_NUMBER}
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT_NUMBER}:${REDIS_PORT_NUMBER}'
     command: /opt/bitnami/scripts/redis/run.sh --maxmemory 100mb
