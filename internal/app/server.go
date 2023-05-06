@@ -28,8 +28,8 @@ func (s *Server) Auth() http.HandlerFunc {
 	}
 
 	type response struct {
-		Status string `json:"status"`
-		Id     uint   `json:"result"`
+		Status  string `json:"status"`
+		Session string `json:"result"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -39,15 +39,42 @@ func (s *Server) Auth() http.HandlerFunc {
 			return
 		}
 
-		id, err := s.identifier.Identify(req.Email, req.Password)
+		cookie, err := r.Cookie("session")
+		s.ErrorLog.Println(err)
+		if err == nil {
+			token, err := s.session.Get(cookie.Value)
+			if err != nil {
+				s.ErrorLog.Println("session reading error: ", err)
+			}
+
+			s.respond(w, r, 200, response{
+				Status:  "OK",
+				Session: token.Hash(),
+			})
+			return
+		} else if !errors.Is(err, http.ErrNoCookie) {
+			s.error(w, r, 500, errors.New("internal session error"))
+			return
+		}
+
+		user, err := s.identifier.Identify(req.Email, req.Password)
 		if err != nil {
 			s.error(w, r, 403, errors.New("no user with given credentials"))
 			return
 		}
 
+		token, err := s.session.Save(session.Token{
+			User: user,
+		})
+
+		if err != nil {
+			s.error(w, r, 500, errors.New("cant make session"))
+		}
+
+		s.setSessionCookie(w, r, token)
 		s.respond(w, r, 200, response{
-			Status: "OK",
-			Id:     id,
+			Status:  "OK",
+			Session: token,
 		})
 	}
 }
@@ -85,8 +112,23 @@ func (s *Server) error(w http.ResponseWriter, r *http.Request, code int, err err
 }
 
 func (s *Server) respond(w http.ResponseWriter, r *http.Request, code int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	if data != nil {
 		json.NewEncoder(w).Encode(data)
 	}
+}
+
+func (s *Server) setSessionCookie(w http.ResponseWriter, r *http.Request, token string) {
+	cookie := http.Cookie{
+		Name:     "session",
+		Value:    token,
+		Path:     "/auth",
+		MaxAge:   3600,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	http.SetCookie(w, &cookie)
 }

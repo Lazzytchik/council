@@ -17,11 +17,11 @@ type Postgres struct {
 	Logger *log.Logger
 }
 
-func (p Postgres) Identify(email, password string) (uint, error) {
+func (p Postgres) Identify(email, password string) (model.User, error) {
 	db, err := p.Connect()
 	if err != nil {
 		p.Logger.Println(err)
-		return 0, err
+		return model.User{}, err
 	}
 	defer db.Close()
 
@@ -31,15 +31,15 @@ func (p Postgres) Identify(email, password string) (uint, error) {
 	err = db.Get(&user, sql, email)
 	if err != nil {
 		p.Logger.Println(err)
-		return 0, errors.New("query error")
+		return model.User{}, errors.New("query error")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		p.Logger.Println(err)
-		return 0, errors.New("wrong username or password")
+		return model.User{}, errors.New("wrong username or password")
 	}
 
-	return user.Id, nil
+	return user, nil
 }
 
 func (p Postgres) Register(user model.User) (uint, error) {

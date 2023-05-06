@@ -6,7 +6,7 @@ import (
 )
 
 type Identifier interface {
-	Identify(username, password string) (uint, error)
+	Identify(username, password string) (model.User, error)
 }
 
 type Registrar interface {
