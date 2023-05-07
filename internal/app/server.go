@@ -40,18 +40,18 @@ func (s *Server) Auth() http.HandlerFunc {
 		}
 
 		cookie, err := r.Cookie("session")
-		s.ErrorLog.Println(err)
 		if err == nil {
-			token, err := s.session.Get(cookie.Value)
+			_, err := s.session.Get(cookie.Value)
 			if err != nil {
 				s.ErrorLog.Println("session reading error: ", err)
+			} else {
+				s.respond(w, r, 200, response{
+					Status:  "OK",
+					Session: cookie.Value,
+				})
+				return
 			}
 
-			s.respond(w, r, 200, response{
-				Status:  "OK",
-				Session: token.Hash(),
-			})
-			return
 		} else if !errors.Is(err, http.ErrNoCookie) {
 			s.error(w, r, 500, errors.New("internal session error"))
 			return
