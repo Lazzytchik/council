@@ -1,8 +1,9 @@
 package session
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
-	"golang.org/x/crypto/bcrypt"
 	"lazzytchk/council/internal/model"
 	"time"
 )
@@ -17,8 +18,7 @@ func (t Token) MarshalBinary() ([]byte, error) {
 }
 
 func (t Token) Hash() string {
-	str := t.User.Email
-	result, _ := bcrypt.GenerateFromPassword([]byte(str), 0)
+	str := t.User.Email + t.User.Password
 
-	return string(result)
+	return hex.EncodeToString(md5.New().Sum([]byte(str)))
 }
