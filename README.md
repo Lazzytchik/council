@@ -1,2 +1,2 @@
 # council
-an distributed auth system for microservices
+a distributed auth system for microservices
