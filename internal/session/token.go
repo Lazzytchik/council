@@ -19,6 +19,5 @@ func (t Token) MarshalBinary() ([]byte, error) {
 
 func (t Token) Hash() string {
 	str := t.User.Email + t.User.Password
-
 	return hex.EncodeToString(md5.New().Sum([]byte(str)))
 }
