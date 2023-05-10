@@ -1,0 +1,26 @@
+syntax = "proto3";
+package auth;
+
+service UserStorage {
+  rpc auth(Credentials) returns (Session);
+  rpc register(User) returns (UserId);
+}
+
+message Session {
+  string token = 1;
+}
+
+message Credentials {
+  string email = 1;
+  string password = 2;
+}
+
+message User {
+  string email = 1;
+  string password = 2;
+  string username = 3;
+}
+
+message UserId {
+  uint32 id = 1;
+}
