@@ -1,4 +1,9 @@
 version: "3.5"
+
+networks:
+  backend:
+    driver: bridge
+
 services:
   user:
     container_name: user_api
@@ -7,28 +12,35 @@ services:
       dockerfile: Dockerfile
     restart: always
     working_dir: /app/src
+    depends_on:
+      - postgres
+    networks:
+      - backend
     volumes:
       - ./:/app/src
     ports:
-      - ${USER_PORT_LOCAL}:${USER_PORT}
+      - ${PORT_LOCAL}:${PORT}
     environment:
       - APP_MODE=${APP_MODE}
-      - HOST=${USER_HOST}
-      - PORT=${USER_PORT}
-      - PORT_LOCAL=${USER_PORT_LOCAL}
+      - HOST=${HOST}
+      - PORT=${PORT}
+      - PORT_LOCAL=${PORT_LOCAL}
 
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
 
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT_NUMBER=${REDIS_PORT_NUMBER}
-    command: ["go", "run", "main.go"]
 
   postgres:
     image: postgres:latest
     container_name: users_pg
+    networks:
+      - backend
     ports:
       - "5432:5432"
     environment:
@@ -39,6 +51,8 @@ services:
 
   redis:
     image: bitnami/redis:latest
+    networks:
+      - backend
     volumes:
       - /redis/persistence/data
     environment:

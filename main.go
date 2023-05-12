@@ -19,6 +19,9 @@ func main() {
 		log.Fatalf("Can't load .env file: %s", envErr)
 	}
 
+	host := os.Getenv("HOST")
+	addr := os.Getenv("PORT")
+
 	options := data.ConnOptions{
 		Name:     os.Getenv("POSTGRES_DB"),
 		User:     os.Getenv("POSTGRES_USER"),
@@ -46,10 +49,15 @@ func main() {
 	builder.ConfigureRegistrar(postgres)
 	builder.ConfigureSession(ses)
 	builder.ConfigureServer(&http.Server{
-		Addr:     ":8080",
+		Addr:     ":" + addr,
 		ErrorLog: el,
 	})
 
 	s := builder.Build()
-	s.ListenAndServe()
+
+	log.Printf("Server is running on %s:%s.", host, addr)
+	if err := s.ListenAndServe(); err != nil {
+		log.Println("cannot start server:", err)
+	}
+
 }
