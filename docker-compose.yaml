@@ -1,9 +1,5 @@
 version: "3.5"
 
-networks:
-  backend:
-    driver: bridge
-
 services:
   user:
     container_name: user_api
@@ -14,8 +10,7 @@ services:
     working_dir: /app/src
     depends_on:
       - postgres
-    networks:
-      - backend
+    network_mode: host
     volumes:
       - ./:/app/src
     ports:
@@ -39,8 +34,7 @@ services:
   postgres:
     image: postgres:latest
     container_name: users_pg
-    networks:
-      - backend
+    network_mode: host
     ports:
       - "5432:5432"
     environment:
@@ -51,8 +45,7 @@ services:
 
   redis:
     image: bitnami/redis:latest
-    networks:
-      - backend
+    network_mode: host
     volumes:
       - /redis/persistence/data
     environment:
