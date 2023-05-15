@@ -1,6 +1,8 @@
 syntax = "proto3";
 package auth;
 
+option go_package = "./grpc";
+
 service UserStorage {
   rpc auth(Credentials) returns (Session);
   rpc register(User) returns (UserId);
