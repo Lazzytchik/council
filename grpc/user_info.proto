@@ -1,7 +1,7 @@
 syntax = "proto3";
 package auth;
 
-option go_package = "./grpc";
+option go_package = "./auth";
 
 service UserStorage {
   rpc auth(Credentials) returns (Session);
