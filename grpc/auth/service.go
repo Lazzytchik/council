@@ -2,16 +2,49 @@ package auth
 
 import (
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"lazzytchk/council/internal/data"
+	"lazzytchk/council/internal/model"
+	"lazzytchk/council/internal/session"
+	"log"
 )
 
 type Server struct {
 	UserStorageServer
+	identifier data.Identifier
+	registrar  data.Registrar
+	session    session.Session
+
+	errLogger *log.Logger
 }
 
 func (s *Server) Auth(ctx context.Context, cred *Credentials) (*Session, error) {
-	return &Session{}, nil
+	user, err := s.identifier.Identify(cred.Email, cred.Password)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error while identifying user", err)
+	}
+
+	token, err := s.session.Save(session.Token{
+		User: user,
+	})
+
+	return &Session{Token: token}, status.New(codes.OK, "").Err()
 }
 
 func (s *Server) Register(ctx context.Context, user *User) (*UserId, error) {
-	return &UserId{}, nil
+
+	u := &model.User{
+		Email:    user.Email,
+		Username: user.Username,
+		Password: user.Password,
+	}
+	u.Hashed()
+
+	id, err := s.registrar.Register(*u)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Cannot register user", err)
+	}
+
+	return &UserId{Id: uint32(id)}, status.New(codes.OK, "").Err()
 }
