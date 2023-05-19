@@ -16,7 +16,7 @@ import (
 func main() {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
-		log.Fatalf("Can't load .env file: %s", envErr)
+		log.Printf("Can't load .env file: %s", envErr)
 	}
 
 	host := os.Getenv("HOST")
