@@ -4,11 +4,11 @@ up:
 
 .PHONY: "migrate-up"
 migrate-up:
-	goose -dir="./migrations" postgres "host=localhost user=postgres password=postgres dbname=users_pg sslmode=disable" up
+	goose -dir="./migrations" postgres "host=${POSTGRES_HOST} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=disable" up
 
 .PHONY: "migrate-reset"
 migrate-reset:
-	goose -dir="./migrations" postgres "host=localhost user=postgres password=postgres dbname=users_pg sslmode=disable" reset
+	goose -dir="./migrations" postgres "host=${POSTGRES_HOST} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=disable" reset
 
 serve:
-	go run main.go
+	[[ "${SERVER_MODE}" == "grpc"]] && go run grpc.go || go run main.go
