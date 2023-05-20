@@ -11,4 +11,4 @@ migrate-reset:
 	goose -dir="./migrations" postgres "host=${POSTGRES_HOST} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=disable" reset
 
 serve:
-	[[ "${SERVER_MODE}" == "grpc"]] && go run grpc.go || go run main.go
+	sh bin/serve.sh
