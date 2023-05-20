@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"lazzytchk/council/internal/data"
-	"lazzytchk/council/internal/session"
+	"github.com/lazzytchik/council/internal/data"
+	"github.com/lazzytchik/council/internal/session"
 	"log"
 )
 

@@ -2,11 +2,11 @@ package auth
 
 import (
 	"context"
+	"github.com/lazzytchik/council/internal/data"
+	"github.com/lazzytchik/council/internal/model"
+	"github.com/lazzytchik/council/internal/session"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"lazzytchk/council/internal/data"
-	"lazzytchk/council/internal/model"
-	"lazzytchk/council/internal/session"
 	"log"
 )
 

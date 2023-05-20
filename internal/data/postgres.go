@@ -3,8 +3,8 @@ package data
 import (
 	"errors"
 	"github.com/jmoiron/sqlx"
+	"github.com/lazzytchik/council/internal/model"
 	"golang.org/x/crypto/bcrypt"
-	"lazzytchk/council/internal/model"
 	"log"
 )
 

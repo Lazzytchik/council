@@ -1,7 +1,7 @@
 package data
 
 import (
-	"lazzytchk/council/internal/model"
+	"github.com/lazzytchik/council/internal/model"
 	"math/rand"
 )
 

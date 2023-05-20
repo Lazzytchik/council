@@ -1,4 +1,4 @@
-module github.com/lazzytchk/council
+module github.com/lazzytchik/council
 
 go 1.20
 

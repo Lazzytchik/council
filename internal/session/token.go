@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"lazzytchk/council/internal/model"
+	"github.com/lazzytchik/council/internal/model"
 	"time"
 )
 
