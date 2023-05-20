@@ -3,9 +3,9 @@ package app
 import (
 	"encoding/json"
 	"errors"
-	"lazzytchk/council/internal/data"
-	"lazzytchk/council/internal/model"
-	"lazzytchk/council/internal/session"
+	"github.com/lazzytchk/council/internal/data"
+	"github.com/lazzytchk/council/internal/model"
+	"github.com/lazzytchk/council/internal/session"
 	"net/http"
 )
 

@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
+	"github.com/lazzytchk/council/grpc/auth"
+	"github.com/lazzytchk/council/internal/data"
+	"github.com/lazzytchk/council/internal/session"
 	"google.golang.org/grpc"
-	"lazzytchk/council/grpc/auth"
-	"lazzytchk/council/internal/data"
-	"lazzytchk/council/internal/session"
 	"log"
 	"net"
 	"os"
