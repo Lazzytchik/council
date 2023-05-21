@@ -32,6 +32,8 @@ func main() {
 
 	el := log.New(os.Stdout, "[gRPC-SERVER]: ", log.Lmicroseconds)
 
+	el.Println(options)
+
 	builder := auth.ServerBuilder{}
 
 	postgres := data.NewPostgres(options, el)
