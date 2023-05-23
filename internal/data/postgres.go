@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 	"github.com/lazzytchik/council/internal/model"
 	"golang.org/x/crypto/bcrypt"

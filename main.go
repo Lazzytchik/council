@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/go-redis/redis"
-	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
 	"github.com/lazzytchik/council/internal/app"
 	"github.com/lazzytchik/council/internal/data"
