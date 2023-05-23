@@ -70,7 +70,7 @@ func (p Postgres) Register(user model.User) (uint, error) {
 func (p Postgres) Connect() (*sqlx.DB, error) {
 	db, err := sqlx.Connect("pgx", p.ConnString())
 	if err != nil {
-		return nil, errors.New("cannot connect to db")
+		return nil, errors.Join(errors.New("cannot connect to db"), err)
 	}
 
 	return db, nil
