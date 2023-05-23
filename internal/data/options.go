@@ -20,3 +20,14 @@ func (c ConnOptions) ConnString() string {
 		c.Name,
 	)
 }
+
+func (c ConnOptions) Describe() string {
+	return fmt.Sprintf(
+		"NAME: %s \nHOST: %s \nPORT: %s \nUSER: %s \nPASSWORD: %s",
+		c.Name,
+		c.Host,
+		c.Port,
+		c.User,
+		c.Password,
+	)
+}
