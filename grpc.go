@@ -32,7 +32,7 @@ func main() {
 
 	el := log.New(os.Stdout, "[gRPC-SERVER]: ", log.Lmicroseconds)
 
-	el.Println(options)
+	el.Println(options.Describe())
 
 	builder := auth.ServerBuilder{}
 

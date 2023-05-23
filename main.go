@@ -36,6 +36,8 @@ func main() {
 		Server: &app.Server{},
 	}
 
+	el.Println(options.Describe())
+
 	postgres := data.NewPostgres(options, el)
 	ses := session.NewRedis(&redis.Options{
 		Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT_NUMBER"),
