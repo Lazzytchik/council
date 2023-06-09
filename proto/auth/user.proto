@@ -7,10 +7,14 @@ option go_package = "./auth";
 service UserStorage {
     rpc auth(Credentials) returns (Session) {
         option (google.api.http) = {
-            post: "/api/v1/category"
+            post: "/auth"
         };
     };
-    rpc register(User) returns (UserId);
+    rpc register(User) returns (UserId) {
+        option (google.api.http) = {
+            post: "/register"
+        };
+    };
 }
 
 message Session {
