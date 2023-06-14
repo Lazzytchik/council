@@ -1,0 +1,37 @@
+syntax = "proto3";
+package auth;
+import "google/api/annotations.proto";
+
+option go_package = "./auth";
+
+service UserStorage {
+    rpc auth(Credentials) returns (Session) {
+        option (google.api.http) = {
+            post: "/auth"
+        };
+    };
+    rpc register(User) returns (UserId) {
+        option (google.api.http) = {
+            post: "/register"
+        };
+    };
+}
+
+message Session {
+    string token = 1;
+}
+
+message Credentials {
+    string email = 1;
+    string password = 2;
+}
+
+message User {
+    string email = 1;
+    string password = 2;
+    string username = 3;
+}
+
+message UserId {
+    uint32 id = 1;
+}
