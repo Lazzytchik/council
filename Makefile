@@ -13,5 +13,5 @@ migrate-up:
 migrate-reset:
 	goose -dir="./migrations" postgres "host=${POSTGRES_HOST} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=disable" reset
 
-serve: migrate-up
+serve:
 	APP_DIR="${PWD}" bin/serve.sh

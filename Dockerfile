@@ -8,7 +8,8 @@ COPY . /app
 RUN go get "github.com/go-redis/redis"
 # RUN go get "go.mongodb.org/mongo-driver/mongo"
 RUN go get "google.golang.org/grpc"
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 
-CMD go run main.go
+CMD make serve
 
 EXPOSE 9000
